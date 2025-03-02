@@ -23,9 +23,6 @@
 #include "talkaction.h"
 #include "pugicast.h"
 
-#include <boost/algorithm/algorithm.hpp>
-#include <boost/algorithm/string.hpp>
-
 TalkActions::TalkActions()
 	: scriptInterface("TalkAction Interface")
 {
@@ -103,21 +100,22 @@ bool TalkActions::registerLuaEvent(TalkAction* event)
 TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type, const std::string& words) const
 {
 	size_t wordsLength = words.length();
-	for (auto it = talkActions.begin(); it != talkActions.end();) {
+	for (auto it = talkActions.begin(); it != talkActions.end(); ) {
 		const std::string& talkactionWords = it->first;
-		if (!caseInsensitiveStartsWith(words, talkactionWords)) {
+		size_t talkactionLength = talkactionWords.length();
+		if (wordsLength < talkactionLength || strncasecmp(words.c_str(), talkactionWords.c_str(), talkactionLength) != 0) {
 			++it;
 			continue;
 		}
 
 		std::string param;
-		if (wordsLength != talkactionWords.size()) {
-			param = words.substr(talkactionWords.size());
+		if (wordsLength != talkactionLength) {
+			param = words.substr(talkactionLength);
 			if (param.front() != ' ') {
 				++it;
 				continue;
 			}
-			boost::algorithm::trim_left(param);
+			trim_left(param, ' ');
 
 			std::string separator = it->second.getSeparator();
 			if (separator != " ") {
@@ -142,7 +140,7 @@ TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type
 			}
 		}
 
-		if (it->second.executeSay(player, talkactionWords, param, type)) {
+		if (it->second.executeSay(player, words, param, type)) {
 			return TALKACTION_CONTINUE;
 		}
 		return TALKACTION_BREAK;
