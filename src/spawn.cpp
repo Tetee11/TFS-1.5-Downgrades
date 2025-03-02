@@ -287,7 +287,8 @@ bool Spawn::isInSpawnZone(const Position& pos)
 
 bool Spawn::spawnMonster(uint32_t spawnId, spawnBlock_t sb, bool startup/* = false*/)
 {
-	bool isBlocked = !startup && findPlayer(sb.pos);
+	//bool isBlocked = !startup && findPlayer(sb.pos);
+	bool isBlocked = false;
 	size_t monstersCount = sb.mTypes.size(), blockedMonsters = 0;
 
 	const auto spawnFunc = [&](bool roll) {
@@ -332,10 +333,10 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 
 	if (startup) {
 		//No need to send out events to the surrounding since there is no one out there to listen!
-		if (!g_game.internalPlaceCreature(monster_ptr.get(), pos, true)) {
+		/*if (!g_game.internalPlaceCreature(monster_ptr.get(), pos, true)) {
 			std::cout << "[Warning - Spawns::startup] Couldn't spawn monster \"" << monster_ptr->getName() << "\" on position: " << pos << '.' << std::endl;
 			return false;
-		}
+		}*/
 	} else {
 		if (!g_game.placeCreature(monster_ptr.get(), pos, false, true)) {
 			return false;
