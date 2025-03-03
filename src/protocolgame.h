@@ -315,6 +315,12 @@ class ProtocolGame final : public Protocol
 		//otclient
 		void parseExtendedOpcode(NetworkMessage& msg);
 
+		//OTCv8
+		void sendFeatures();
+
+		void parseNewPing(NetworkMessage& msg);
+		void sendNewPing(uint32_t pingId);
+
 		friend class Player;
 
 		// Helpers so we don't need to bind every time
@@ -339,6 +345,8 @@ class ProtocolGame final : public Protocol
 
 		bool debugAssertSent = false;
 		bool acceptPackets = false;
+
+		uint16_t otclientV8 = 0;
 };
 
 #endif
